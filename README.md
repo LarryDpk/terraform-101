@@ -21,6 +21,8 @@ Terraform作为基础设施即代码（Infrastructure as Code，很简称IaC）�
 
 [《Terraform 101 从入门到实践》 前言](https://www.pkslow.com/archives/terraform-101-preface)
 
+[《Terraform 101 从入门到实践》 第一章 Terraform初相识](https://www.pkslow.com/archives/terraform-101-introduction)
+
 
 
 
