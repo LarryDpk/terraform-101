@@ -7,6 +7,10 @@ Terraform作为基础设施即代码（Infrastructure as Code，很简称IaC）�
 
 
 
+如果大家觉得不错，可以好心给个STAR支持一下哦。你的鼓励，是我的动力。
+
+
+
 > 《Terraform 101 从入门到实践》这本书只将在[南瓜慢说官方网站](https://www.pkslow.com/tags/terraform101)和[GitHub](https://github.com/LarryDpk/terraform-101)两个地方同步更新，如果你在其它地方看到，那应该就是抄袭和未授权的转载。书中的示例代码也是放在GitHub上，方便大家参考查看。
 
 **博客目录**：
@@ -19,6 +23,10 @@ Terraform作为基础设施即代码（Infrastructure as Code，很简称IaC）�
 - [《Terraform 101 从入门到实践》 第五章 HCL语法](https://www.pkslow.com/archives/terraform-101-hcl)
 - [《Terraform 101 从入门到实践》 Terraform常用命令](https://www.pkslow.com/archives/terraform-101-commands)
 
+- 插件开发（未开始）
+- 最佳实践（未开始）
+- 开发套件（未开始）
+
 
 
 **GitHub目录**：
@@ -30,6 +38,9 @@ Terraform作为基础设施即代码（Infrastructure as Code，很简称IaC）�
 - [第四章 States状态管理](https://github.com/LarryDpk/terraform-101/blob/main/04.States状态管理.md)
 - [第五章 HCL语法](https://github.com/LarryDpk/terraform-101/blob/main/05.HCL语法.md)
 - [Terraform常用命令](https://github.com/LarryDpk/terraform-101/blob/main/Terraform常用命令.md)
+- 插件开发（未开始）
+- 最佳实践（未开始）
+- 开发套件（未开始）
 
 ---
 
