@@ -50,6 +50,47 @@ $ terraform destroy -auto-approve
 
 
 
+创建一个工作区并切换：
+
+```bash
+$ terraform workspace new pkslow
+```
+
+
+
+切换到已存在的工作区：
+
+```bash
+$ terraform workspace select pkslow
+```
+
+
+
+输出变更计划到指定文件：
+
+```bash
+$ terraform plan -out=pkslow.plan
+```
+
+根据计划执行变更：
+
+```bash
+$ terraform apply pkslow.plan
+```
+
+
+
+输入变量：
+
+```bash
+$ terraform apply -var="env=uat"
+$ terraform apply -var-file="prod.tfvars"
+```
+
+
+
+
+
 其它：
 
 ```bash

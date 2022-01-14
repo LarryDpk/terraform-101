@@ -22,6 +22,7 @@ Terraform作为基础设施即代码（Infrastructure as Code，很简称IaC）�
 - [《Terraform 101 从入门到实践》 第四章 States状态管理](https://www.pkslow.com/archives/terraform-101-states)
 - [《Terraform 101 从入门到实践》 第五章 HCL语法](https://www.pkslow.com/archives/terraform-101-hcl)
 - [《Terraform 101 从入门到实践》 Terraform常用命令](https://www.pkslow.com/archives/terraform-101-commands)
+- Terraform在公有云的应用（未开始）
 - Terraform问题定位与分析（未开始）
 - 插件开发（未开始）
 - 最佳实践（未开始）
@@ -38,6 +39,7 @@ Terraform作为基础设施即代码（Infrastructure as Code，很简称IaC）�
 - [第四章 States状态管理](https://github.com/LarryDpk/terraform-101/blob/main/04.States状态管理.md)
 - [第五章 HCL语法](https://github.com/LarryDpk/terraform-101/blob/main/05.HCL语法.md)
 - [Terraform常用命令](https://github.com/LarryDpk/terraform-101/blob/main/Terraform常用命令.md)
+- Terraform在公有云的应用（未开始）
 - Terraform问题定位与分析（未开始）
 - 插件开发（未开始）
 - 最佳实践（未开始）
