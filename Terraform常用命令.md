@@ -67,8 +67,6 @@ $ terraform apply -var-file="prod.tfvars"
 
 
 
-
-
 其它：
 
 ```bash

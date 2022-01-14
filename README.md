@@ -15,13 +15,13 @@ Terraform作为基础设施即代码（Infrastructure as Code，很简称IaC）�
 
 **博客目录**：
 
-- [《Terraform 101 从入门到实践》 前言](https://www.pkslow.com/archives/terraform-101-preface)
-- [《Terraform 101 从入门到实践》 第一章 Terraform初相识](https://www.pkslow.com/archives/terraform-101-introduction)
-- [《Terraform 101 从入门到实践》 第二章 Providers插件管理](https://www.pkslow.com/archives/terraform-101-providers)
-- [《Terraform 101 从入门到实践》 第三章 Modules模块化](https://www.pkslow.com/archives/terraform-101-modules)
-- [《Terraform 101 从入门到实践》 第四章 States状态管理](https://www.pkslow.com/archives/terraform-101-states)
-- [《Terraform 101 从入门到实践》 第五章 HCL语法](https://www.pkslow.com/archives/terraform-101-hcl)
-- [《Terraform 101 从入门到实践》 Terraform常用命令](https://www.pkslow.com/archives/terraform-101-commands)
+- [前言](https://www.pkslow.com/archives/terraform-101-preface)
+- [第一章 Terraform初相识](https://www.pkslow.com/archives/terraform-101-introduction)
+- [第二章 Providers插件管理](https://www.pkslow.com/archives/terraform-101-providers)
+- [第三章 Modules模块化](https://www.pkslow.com/archives/terraform-101-modules)
+- [第四章 States状态管理](https://www.pkslow.com/archives/terraform-101-states)
+- [第五章 HCL语法](https://www.pkslow.com/archives/terraform-101-hcl)
+- [Terraform常用命令](https://www.pkslow.com/archives/terraform-101-commands)
 - Terraform在公有云的应用（未开始）
 - Terraform问题定位与分析（未开始）
 - 插件开发（未开始）
