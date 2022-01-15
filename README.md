@@ -1,5 +1,5 @@
 # Terraform 101 从入门到实践
-Terraform作为基础设施即代码（Infrastructure as Code，很简称IaC）的事实标准，非常值得大家学习。但Terraform本身发展是比较快的，国内的资料也相对较少，所以我整理了我的学习心得，希望可以帮助到大家。
+Terraform作为基础设施即代码（Infrastructure as Code，很简称IaC）的事实标准，非常值得大家学习。我是工作中会使用公有云，所以需要经常使用Terraform作为IaC工具以实现自动化部署；也花时间考取了**Terraform Associate**的证书。所以对它的使用我还是有一些经验的。但Terraform本身发展是比较快的，国内的资料也相对较少，所以我整理了我的学习心得，希望可以帮助到大家。
 
 因此，我做了一个决定，将知识点整理成书，叫《Terraform 101 从入门到实践》。我之前在我的博客也写了[Terraform系列的文章](https://www.pkslow.com/tags/terraform)，还相对还是比较零散，不够系统和全面，所以还是决定尝试写书吧。
 
