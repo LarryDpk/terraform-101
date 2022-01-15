@@ -8,14 +8,11 @@ Terraform作为基础设施即代码（Infrastructure as Code，很简称IaC）�
 目前进度可能大概是40%？我也不确定。哈哈，佛系更新。但Terraform的基本概念是已经介绍了的，了解与入门是够用了。代码目前没有整理上传，但在文章中都会有，不影响大家理解。我会尽量在工作之余、带娃之余、睡觉之余挤时间完成。这篇文章也算是立个Flag，并自我监督吧。
 
 
-<div style="width: 100%;
-background-color: #ddd;">
+<div style="width: 100%;background-color: #ddd;">
 <div style="width: 39%; background-color: #5d21d0;
-text-align: right;
-padding-right: 20px;
-line-height: 40px;
-color: white;">
-  <div>39%</div>
+text-align: right;padding-right: 20px;
+line-height: 40px;color: white;">
+  39%
 </div>
 </div>
 
