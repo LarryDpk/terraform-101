@@ -5,17 +5,18 @@ Terraform作为基础设施即代码（Infrastructure as Code，很简称IaC）�
 
 该书会不断增加和完善内容，所以初期会有很多不完美的地方。如果大家有问题可以提Issue，但前期不会处理。我的目标是在2022年5月11日前完成，希望不要鸽。
 
-目前进度可能大概是40%？我也不确定。哈哈，佛系更新。但Terraform的基本概念是已经介绍了的，了解与入门是够用了。代码目前没有整理上传，但在文章中都会有，不影响大家理解。我会尽量在工作之余、带娃之余、睡觉之余挤时间完成。这篇文章也算是立个Flag，并自我监督吧。
+目前进度可能大概是39%？我也不确定。哈哈，佛系更新。但Terraform的基本概念是已经介绍了的，了解与入门是够用了。代码目前没有整理上传，但在文章中都会有，不影响大家理解。我会尽量在工作之余、带娃之余、睡觉之余挤时间完成。这篇文章也算是立个Flag，并自我监督吧。
 
 
-
+进度条：
 <div style="width: 100%;background-color: #ddd;">
-<h4 style="width: 39%; background-color: #5d21d0;
+<div style="width: 39%; background-color: #5d21d0;
 text-align: right;padding-right: 20px;
 line-height: 40px;color: white;">
   39%
-</h4>
 </div>
+</div>
+
 
 
 
