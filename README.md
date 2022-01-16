@@ -35,9 +35,8 @@ line-height: 40px;color: white;">
 - [第三章 Modules模块化](https://www.pkslow.com/archives/terraform-101-modules)
 - [第四章 States状态管理](https://www.pkslow.com/archives/terraform-101-states)
 - [第五章 HCL语法](https://www.pkslow.com/archives/terraform-101-hcl)
+- [Functions函数](https://www.pkslow.com/archives/terraform-101-functions)
 - [Terraform常用命令](https://www.pkslow.com/archives/terraform-101-commands)
-
-
 
 
 
@@ -49,6 +48,7 @@ line-height: 40px;color: white;">
 - [第三章 Modules模块化](https://github.com/LarryDpk/terraform-101/blob/main/03.Modules模块化.md)
 - [第四章 States状态管理](https://github.com/LarryDpk/terraform-101/blob/main/04.States状态管理.md)
 - [第五章 HCL语法](https://github.com/LarryDpk/terraform-101/blob/main/05.HCL语法.md)
+- [Functions函数](https://github.com/LarryDpk/terraform-101/blob/main/Functions函数.md)
 - [Terraform常用命令](https://github.com/LarryDpk/terraform-101/blob/main/Terraform常用命令.md)
 - Terraform在公有云的应用（未开始）
 - Terraform问题定位与分析（未开始）
