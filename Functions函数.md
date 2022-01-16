@@ -119,3 +119,47 @@ Terraform为了让大家在表达式上可以更加灵活方便地进行计算�
 0
 ```
 
+
+
+# 字符串函数
+
+删去换行，在从文件中读取文本时非常有用：
+
+```hcl
+> chomp("www.pkslow.com")
+"www.pkslow.com"
+> chomp("www.pkslow.com\n")
+"www.pkslow.com"
+> chomp("www.pkslow.com\n\n")
+"www.pkslow.com"
+> chomp("www.pkslow.com\n\n\r")
+"www.pkslow.com"
+> chomp("www.pkslow.com\n\n\ra")
+<<EOT
+www.pkslow.com
+
+a
+EOT
+```
+
+
+
+格式化输出：
+
+```hcl
+> format("Hi, %s!", "Larry")
+"Hi, Larry!"
+
+> format("My name is %s, I'm %d", "Larry", 18)
+"My name is Larry, I'm 18"
+
+> format("The reuslt is %.2f", 3)
+"The reuslt is 3.00"
+
+> format("The reuslt is %.2f", 3.1415)
+"The reuslt is 3.14"
+
+> format("The reuslt is %8.2f", 3.1415)
+"The reuslt is     3.14"
+```
+
