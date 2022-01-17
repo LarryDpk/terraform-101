@@ -1,3 +1,7 @@
+> 《Terraform 101 从入门到实践》这本书只将在[南瓜慢说官方网站](https://www.pkslow.com/tags/terraform101)和[GitHub](https://github.com/LarryDpk/terraform-101)两个地方同步更新，如果你在其它地方看到，那应该就是抄袭和未授权的转载。书中的示例代码也是放在GitHub上，方便大家参考查看。
+
+---
+
 # Terraform 101 从入门到实践
 Terraform作为基础设施即代码（Infrastructure as Code，很简称IaC）的事实标准，非常值得大家学习。我是工作中会使用公有云，所以需要经常使用Terraform作为IaC工具以实现自动化部署；也花时间考取了**Terraform Associate**的证书。所以对它的使用我还是有一些经验的。但Terraform本身发展是比较快的，国内的资料也相对较少，所以我整理了我的学习心得，希望可以帮助到大家。
 
@@ -23,9 +27,6 @@ line-height: 40px;color: white;">
 
 如果大家觉得不错，可以好心给个STAR支持一下哦。你的鼓励，是我的动力。
 
-
-
-> 《Terraform 101 从入门到实践》这本书只将在[南瓜慢说官方网站](https://www.pkslow.com/tags/terraform101)和[GitHub](https://github.com/LarryDpk/terraform-101)两个地方同步更新，如果你在其它地方看到，那应该就是抄袭和未授权的转载。书中的示例代码也是放在GitHub上，方便大家参考查看。
 
 **博客目录**：
 
