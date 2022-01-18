@@ -163,3 +163,49 @@ EOT
 "The reuslt is     3.14"
 ```
 
+
+
+遍历格式化列表：
+
+```hcl
+> formatlist("My name is %s, I'm %d %s.", ["Larry", "Jeremy", "Tailor"], [18, 28, 33], "in 2022")
+tolist([
+  "My name is Larry, I'm 18 in 2022.",
+  "My name is Jeremy, I'm 28 in 2022.",
+  "My name is Tailor, I'm 33 in 2022.",
+])
+```
+
+参数可以是List，还可以是单个变量。
+
+
+
+字符串连接：
+
+```hcl
+> join(".", ["www", "pkslow", "com"])
+"www.pkslow.com"
+> join(", ", ["Larry", "Pkslow", "JJ"])
+"Larry, Pkslow, JJ"
+```
+
+
+
+大小写字母转换：
+
+```hcl
+> lower("Larry Nanhua DENG")
+"larry nanhua deng"
+> upper("Larry Nanhua DENG")
+"LARRY NANHUA DENG"
+```
+
+
+
+首字母大写：
+
+```hcl
+> title("larry")
+"Larry"
+```
+
