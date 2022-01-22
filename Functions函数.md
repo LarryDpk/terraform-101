@@ -209,3 +209,53 @@ tolist([
 "Larry"
 ```
 
+
+
+替换：
+
+```hcl
+> replace("www.larrydpk.com", "larrydpk", "pkslow")
+"www.pkslow.com"
+> replace("hello larry", "/la.*y/", "pkslow")
+"hello pkslow"
+```
+
+
+
+
+
+分割：
+
+```hcl
+> split(".", "www.pklow.com")
+tolist([
+  "www",
+  "pklow",
+  "com",
+])
+```
+
+
+
+反转：
+
+```hcl
+> strrev("pkslow")
+"wolskp"
+```
+
+
+
+截取：
+
+```hcl
+> substr("Larry Deng", 0, 5)
+"Larry"
+> substr("Larry Deng", -4, -1)
+"Deng"
+```
+
+
+
+
+
