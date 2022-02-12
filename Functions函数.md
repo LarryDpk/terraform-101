@@ -303,3 +303,82 @@ tolist([
 
 更多正则匹配语法可参考：https://www.terraform.io/language/functions/regex
 
+
+
+# 集合类函数
+
+`alltrue`：判断列表是否全为真，空列表直接返回true。只能是bool类型或者对应的字符串。
+
+```hcl
+> alltrue([true, "true"])
+true
+> alltrue([true, "true", false])
+false
+> alltrue([])
+true
+> alltrue([1])
+╷
+│ Error: Invalid function argument
+│ 
+│   on <console-input> line 1:
+│   (source code not available)
+│ 
+│ Invalid value for "list" parameter: element 0: bool required.
+```
+
+
+
+`anytrue`：判断列表是否有真，只要有一个为真就返回true。空列表为false。
+
+```hcl
+> anytrue([true])
+true
+> anytrue([true, false])
+true
+> anytrue([false, false])
+false
+> anytrue([])
+false
+```
+
+
+
+`chunklist`分片：根据分片数来对列表进行切分。
+
+```hcl
+> chunklist(["www", "pkslow", "com", "Larry", "Deng"], 3)
+tolist([
+  tolist([
+    "www",
+    "pkslow",
+    "com",
+  ]),
+  tolist([
+    "Larry",
+    "Deng",
+  ]),
+])
+```
+
+
+
+`coalesce`返回第一个非空元素：
+
+```hcl
+> coalesce("", "a", "b")
+"a"
+> coalesce("", "", "b")
+"b"
+```
+
+
+
+`coalescelist`返回第一个非空列表：
+
+```hcl
+> coalescelist([], ["pkslow"])
+[
+  "pkslow",
+]
+```
+
