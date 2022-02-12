@@ -257,5 +257,49 @@ tolist([
 
 
 
+去除头尾某些特定字符，注意这里只要有对应字符就会删除：
 
+```hcl
+> trim("?!what?!!!!!", "?!")
+"what"
+> trim("abaaaaabbLarry Dengaab", "ab")
+"Larry Deng"
+```
+
+
+
+去除头尾特定字符串，注意与上面的区别：
+
+```hcl
+> trimsuffix("?!what?!!!!!", "!!!")
+"?!what?!!"
+> trimprefix("?!what?!!!!!", "?!")
+"what?!!!!!"
+```
+
+
+
+去除头尾的空格、换行等空串：
+
+```hcl
+> trimspace(" Larry Deng \n\r")
+"Larry Deng"
+```
+
+
+
+正则匹配，下面的例子是匹配第一个和匹配所有：
+
+```hcl
+> regex("[a-z\\.]+", "2021www.pkslow.com2022larry deng 31415926")
+"www.pkslow.com"
+> regexall("[a-z\\.]+", "2021www.pkslow.com2022larry deng 31415926")
+tolist([
+  "www.pkslow.com",
+  "larry",
+  "deng",
+])
+```
+
+更多正则匹配语法可参考：https://www.terraform.io/language/functions/regex
 
