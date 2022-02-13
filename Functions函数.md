@@ -382,3 +382,88 @@ tolist([
 ]
 ```
 
+
+
+从字符串列表里把空的去掉：
+
+```hcl
+> compact(["", "www", "", "pkslow", "com"])
+tolist([
+  "www",
+  "pkslow",
+  "com",
+])
+```
+
+
+
+`concat`连接多个列表：
+
+```hcl
+> concat([1, 2, 3], [4, 5, 6])
+[
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+]
+```
+
+
+
+`contains`判断是否存在某个元素：
+
+```hcl
+> contains(["www", "pkslow", "com"], "pkslow")
+true
+> contains(["www", "pkslow", "com"], "Larry")
+false
+```
+
+
+
+`distinct`去除重复元素：
+
+```hcl
+> distinct([1, 2, 2, 1, 3, 8, 1, 10])
+tolist([
+  1,
+  2,
+  3,
+  8,
+  10,
+])
+```
+
+
+
+`element`获取列表的某个元素：
+
+```hcl
+> element(["a", "b", "c"], 1)
+"b"
+> element(["a", "b", "c"], 2)
+"c"
+> element(["a", "b", "c"], 3)
+"a"
+> element(["a", "b", "c"], 4)
+"b"
+```
+
+
+
+`flatten`把内嵌的列表都展开成一个列表：
+
+```hcl
+> flatten([1, 2, 3, [1], [[6]]])
+[
+  1,
+  2,
+  3,
+  1,
+  6,
+]
+```
+
