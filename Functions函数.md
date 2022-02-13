@@ -467,3 +467,70 @@ tolist([
 ]
 ```
 
+
+
+`index`获取列表中的元素的索引值：
+
+```hcl
+> index(["www", "pkslow", "com"], "pkslow")
+1
+```
+
+
+
+`keys`获取map的所有key值：
+
+```hcl
+> keys({name="Larry", age=18, webSite="www.pkslow.com"})
+[
+  "age",
+  "name",
+  "webSite",
+]
+```
+
+
+
+`values`获取map的value值：
+
+```hcl
+> values({name="Larry", age=18, webSite="www.pkslow.com"})
+[
+  18,
+  "Larry",
+  "www.pkslow.com",
+]
+```
+
+
+
+`length`获取字符串、列表、Map等的长度：
+
+```hcl
+> length([])
+0
+> length(["pkslow"])
+1
+> length(["pkslow", "com"])
+2
+> length({pkslow = "com"})
+1
+> length("pkslow")
+6
+```
+
+
+
+`lookup(map, key, default)`根据key值在map中找到对应的value值，如果没有则返回默认值：
+
+```hcl
+> lookup({name = "Larry", age = 18}, "age", 1)
+18
+> lookup({name = "Larry", age = 18}, "myAge", 1)
+1
+```
+
+
+
+
+
