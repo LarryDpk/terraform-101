@@ -532,5 +532,248 @@ tolist([
 
 
 
+`matchkeys(valueslist, keyslist, searchset)`对key值进行匹配。匹配到key值后，返回对应的Value值。
 
+```hcl
+> matchkeys(["a", "b", "c", "d"], [1, 2, 3, 4], [2, 4])
+tolist([
+  "b",
+  "d",
+])
+```
+
+
+
+`merge`合并Map，key相同的会被最后的覆盖：
+
+```hcl
+> merge({name = "Larry", webSite = "pkslow.com"}, {age = 18})
+{
+  "age" = 18
+  "name" = "Larry"
+  "webSite" = "pkslow.com"
+}
+> merge({name = "Larry", webSite = "pkslow.com"}, {age = 18}, {age = 13})
+{
+  "age" = 13
+  "name" = "Larry"
+  "webSite" = "pkslow.com"
+}
+```
+
+
+
+`one`取集合的一个元素，如果为空则返回null；如果只有一个元素，则返回该元素；如果多个元素，则报错：
+
+```hcl
+> one([])
+null
+> one(["pkslow"])
+"pkslow"
+> one(["pkslow", "com"])
+╷
+│ Error: Invalid function argument
+│ 
+│   on <console-input> line 1:
+│   (source code not available)
+│ 
+│ Invalid value for "list" parameter: must be a list, set, or tuple value with either zero or one elements.
+╵
+```
+
+
+
+`range`生成顺序列表：
+
+```hcl
+range(max)
+range(start, limit)
+range(start, limit, step)
+
+> range(3)
+tolist([
+  0,
+  1,
+  2,
+])
+> range(1, 6)
+tolist([
+  1,
+  2,
+  3,
+  4,
+  5,
+])
+> range(1, 6, 2)
+tolist([
+  1,
+  3,
+  5,
+])
+```
+
+
+
+`reverse`反转列表：
+
+```hcl
+> reverse([1, 2, 3, 4])
+[
+  4,
+  3,
+  2,
+  1,
+]
+```
+
+
+
+`setintersection`对set求交集：
+
+```hcl
+> setintersection([1, 2, 3], [2, 3, 4], [2, 3, 6])
+toset([
+  2,
+  3,
+])
+```
+
+
+
+`setproduct`列出所有组合可能：
+
+```hcl
+> setproduct(["Larry", "Harry"], ["Deng", "Potter"])
+tolist([
+  [
+    "Larry",
+    "Deng",
+  ],
+  [
+    "Larry",
+    "Potter",
+  ],
+  [
+    "Harry",
+    "Deng",
+  ],
+  [
+    "Harry",
+    "Potter",
+  ],
+])
+```
+
+
+
+`setsubtract`：set的减法
+
+```hcl
+> setsubtract([1, 2, 3], [3, 4])
+toset([
+  1,
+  2,
+])
+
+# 求不同
+> setunion(setsubtract(["a", "b", "c"], ["a", "c", "d"]), setsubtract(["a", "c", "d"], ["a", "b", "c"]))
+[
+  "b",
+  "d",
+]
+```
+
+
+
+`setunion`：set的加法
+
+```hcl
+> setunion([1, 2, 3], [3, 4])
+toset([
+  1,
+  2,
+  3,
+  4,
+])
+```
+
+
+
+`slice(list, startindex, endindex)`截取列表部分，包括startindex，但不包括endindex：
+
+```hcl
+> slice(["a", "b", "c", "d", "e"], 1, 4)
+[
+  "b",
+  "c",
+  "d",
+]
+```
+
+
+
+`sort`对列表中的字符串进行排序，要注意如果输入的是数字，会先转化为字符串再排序：
+
+```hcl
+> sort(["larry", "pkslow", "com", "deng"])
+tolist([
+  "com",
+  "deng",
+  "larry",
+  "pkslow",
+])
+> sort([3, 6, 1, 9, 12, 79, 22])
+tolist([
+  "1",
+  "12",
+  "22",
+  "3",
+  "6",
+  "79",
+  "9",
+])
+```
+
+
+
+`sum`求和：
+
+```hcl
+> sum([3, 1.2, 9, 17.3, 2.2])
+32.7
+```
+
+
+
+`transpose`对Map的key和value进行换位：
+
+```hcl
+> transpose({"a" = ["1", "2"], "b" = ["2", "3"]})
+tomap({
+  "1" = tolist([
+    "a",
+  ])
+  "2" = tolist([
+    "a",
+    "b",
+  ])
+  "3" = tolist([
+    "b",
+  ])
+})
+```
+
+
+
+
+
+`zipmap`根据key和value的列表按一对一关系生成Map：
+
+```hcl
+> zipmap(["age", "name"], [18, "Larry Deng"])
+{
+  "age" = 18
+  "name" = "Larry Deng"
+}
+```
 
