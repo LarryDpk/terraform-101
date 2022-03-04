@@ -777,3 +777,114 @@ tomap({
 }
 ```
 
+
+
+# 加密解密
+
+Base64：
+
+```hcl
+> base64encode("pkslow")
+"cGtzbG93"
+> base64decode("cGtzbG93")
+"pkslow"
+> textencodebase64("pkslow", "UTF-8")
+"cGtzbG93"
+> textdecodebase64("cGtzbG93", "UTF-8")
+"pkslow"
+```
+
+
+
+csv文本解析：
+
+```hcl
+> csvdecode("seq,name,age\n1,larry,18\n2,pkslow,3\n3,Jeremy,29")
+tolist([
+  {
+    "age" = "18"
+    "name" = "larry"
+    "seq" = "1"
+  },
+  {
+    "age" = "3"
+    "name" = "pkslow"
+    "seq" = "2"
+  },
+  {
+    "age" = "29"
+    "name" = "Jeremy"
+    "seq" = "3"
+  },
+])
+```
+
+
+
+Json解析：
+
+```hcl
+> jsonencode({"name"="Larry", "age"=18})
+"{\"age\":18,\"name\":\"Larry\"}"
+> jsondecode("{\"age\":18,\"name\":\"Larry\"}")
+{
+  "age" = 18
+  "name" = "Larry"
+}
+```
+
+
+
+URL：
+
+```hcl
+> urlencode("Larry Deng/a/:/./@")
+"Larry+Deng%2Fa%2F%3A%2F.%2F%40"
+```
+
+
+
+YAML：
+
+```hcl
+> yamlencode({"a":"b", "c":"d"})
+"a": "b"
+"c": "d"
+
+> yamlencode({"foo":[1, 2, 3], "bar": "baz"})
+"bar": "baz"
+"foo":
+- 1
+- 2
+- 3
+
+> yamlencode({"foo":[1, {"a":"b","c":"d"}, 3], "bar": "baz"})
+"bar": "baz"
+"foo":
+- 1
+- "a": "b"
+  "c": "d"
+- 3
+> yamldecode("hello: world")
+{
+  "hello" = "world"
+}
+
+> yamldecode("true")
+true
+
+> yamldecode("{a: &foo [1, 2, 3], b: *foo}")
+{
+  "a" = [
+    1,
+    2,
+    3,
+  ]
+  "b" = [
+    1,
+    2,
+    3,
+  ]
+}
+```
+
