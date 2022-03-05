@@ -942,3 +942,28 @@ toset([
 
 [`templatefile(path, vars)`模板化文件](https://www.terraform.io/language/functions/templatefile)：指定文件和变量，把变量值替换掉模板中的变量。
 
+
+
+# 时间函数
+
+获取当前时间，并格式化显示，格式请参考：https://www.terraform.io/language/functions/formatdate
+
+```hcl
+> formatdate("YYYY-MM-DD hh:mm:ss / D MMMM YYYY", timestamp())
+"2022-03-05 08:25:48 / 5 March 2022"
+> formatdate("EEEE, DD-MMM-YY hh:mm:ss ZZZ", "2018-01-02T23:12:01Z")
+"Tuesday, 02-Jan-18 23:12:01 UTC"
+```
+
+
+
+时间加减：
+
+```hcl
+> timeadd(timestamp(), "24h")
+"2022-03-06T08:28:52Z"
+> timeadd(timestamp(), "-24h10m")
+"2022-03-04T08:19:08Z"
+```
+
+支持的单位有：`"ns"`, `"us"` (or `"µs"`), `"ms"`, `"s"`, `"m"`, and `"h"`.
