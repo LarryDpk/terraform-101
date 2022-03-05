@@ -888,3 +888,57 @@ true
 }
 ```
 
+
+
+文件处理：
+
+获取绝对路径：
+
+```hcl
+> abspath(path.root)
+"/Users/larry"
+```
+
+
+
+获取路径中的目录，或者是文件名：
+
+```hcl
+> dirname("/home/larry/soft/terraform")
+"/home/larry/soft"
+> dirname("/home/larry/soft/terraform/")
+"/home/larry/soft/terraform"
+> basename("/home/larry/soft/terraform")
+"terraform"
+> basename("/home/larry/soft/terraform/")
+"terraform"
+```
+
+
+
+判断文件是否存在，并获取文件内容：
+
+```hcl
+> fileexists("/Users/larry/.bash_profile")
+true
+> file("/Users/larry/.bash_profile")
+> filebase64("/Users/larry/.bash_profile")
+```
+
+
+
+根据模式匹配所有文件：
+
+```hcl
+> fileset("/Users/larry", "*.bash*")
+toset([
+  ".bash_history",
+  ".bash_profile",
+  ".bash_profile.backup",
+])
+```
+
+
+
+[`templatefile(path, vars)`模板化文件](https://www.terraform.io/language/functions/templatefile)：指定文件和变量，把变量值替换掉模板中的变量。
+
