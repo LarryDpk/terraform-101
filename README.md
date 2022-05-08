@@ -52,7 +52,7 @@ line-height: 40px;color: white;">
 - [第五章 HCL语法](https://github.com/LarryDpk/terraform-101/blob/main/05.HCL语法.md)
 - [Functions函数](https://github.com/LarryDpk/terraform-101/blob/main/Functions函数.md)
 - [Terraform常用命令](https://github.com/LarryDpk/terraform-101/blob/main/Terraform常用命令.md)
-- Terraform在公有云的应用（未开始）
+- [Terraform在公有云的应用](https://github.com/LarryDpk/terraform-101/blob/main/Terraform在公有云的应用.md)
 - Terraform问题定位与分析（未开始）
 - 插件开发（未开始）
 - 最佳实践（未开始）
