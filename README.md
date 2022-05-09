@@ -29,19 +29,6 @@ line-height: 40px;color: white;">
 如果大家觉得不错，可以好心给个STAR支持一下哦。你的鼓励，是我的动力。
 
 
-**博客目录**：
-
-- [前言](https://www.pkslow.com/archives/terraform-101-preface)
-- [第一章 Terraform初相识](https://www.pkslow.com/archives/terraform-101-introduction)
-- [第二章 Providers插件管理](https://www.pkslow.com/archives/terraform-101-providers)
-- [第三章 Modules模块化](https://www.pkslow.com/archives/terraform-101-modules)
-- [第四章 States状态管理](https://www.pkslow.com/archives/terraform-101-states)
-- [第五章 HCL语法](https://www.pkslow.com/archives/terraform-101-hcl)
-- [Functions函数](https://www.pkslow.com/archives/terraform-101-functions)
-- [Terraform常用命令](https://www.pkslow.com/archives/terraform-101-commands)
-
-
-
 **GitHub目录**：
 
 - [前言](https://github.com/LarryDpk/terraform-101/blob/main/README.md)
@@ -58,11 +45,19 @@ line-height: 40px;color: white;">
 - 最佳实践（未开始）
 - 开发套件（未开始）
 
+
+**博客目录**：
+
+- [前言](https://www.pkslow.com/archives/terraform-101-preface)
+- [第一章 Terraform初相识](https://www.pkslow.com/archives/terraform-101-introduction)
+- [第二章 Providers插件管理](https://www.pkslow.com/archives/terraform-101-providers)
+- [第三章 Modules模块化](https://www.pkslow.com/archives/terraform-101-modules)
+- [第四章 States状态管理](https://www.pkslow.com/archives/terraform-101-states)
+- [第五章 HCL语法](https://www.pkslow.com/archives/terraform-101-hcl)
+- [Functions函数](https://www.pkslow.com/archives/terraform-101-functions)
+- [Terraform常用命令](https://www.pkslow.com/archives/terraform-101-commands)
+
 ---
-
-
-
-
 
 
 最后，附上我的Terraform证书：
