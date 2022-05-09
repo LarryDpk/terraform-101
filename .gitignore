@@ -29,7 +29,7 @@ override.tf.json
 # example: *tfplan*
 
 *.lock.hcl
-
+.result
 
 .idea
 pictures
