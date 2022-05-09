@@ -67,11 +67,11 @@ line-height: 40px;color: white;">
 
 最后，附上我的Terraform证书：
 
-<img src="https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/other/terraform-101/pictures/00.preface/terraform-associate.certificate.png" width="300">
+<img src="https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/other/terraform-101/pictures/00.preface/terraform-associate.certificate.png" width="300" alt="">
 
 
 
-<img src="https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/other/terraform-101/pictures/00.preface/terraform-associate.certificate-larry.png" width="300">
+<img src="https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/other/terraform-101/pictures/00.preface/terraform-associate.certificate-larry.png" width="300" alt="">
 
 
 
