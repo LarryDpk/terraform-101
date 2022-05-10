@@ -167,7 +167,7 @@ $ unzip terraform-provider-google_4.0.0_darwin_amd64.zip
 
 版本文件version.tf:
 
-```json
+```hcl
 terraform {
   required_version = "= 1.0.11"
   required_providers {
@@ -184,7 +184,7 @@ terraform {
 
 主文件main.tf:
 
-```json
+```hcl
 provider "google" {
   project     = "pkslow"
 }
