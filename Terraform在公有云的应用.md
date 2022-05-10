@@ -137,6 +137,172 @@ topic: projects/pkslow/topics/pkslow-test
 
 ![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/2021/11/init-gcp-sdk.pubsub.png)
 
+---
 
+# Terraform创建Pub/Sub
+
+## 下载Terraform插件
+
+我们需要安装GCP的Terraform插件来管理GCP资源：
+
+```bash
+# 设置插件目录
+$ export TERRAFORM_PLUGIN=/Users/larry/Software/terraform/plugins
+# 创建目录
+$ mkdir -p ${TERRAFORM_PLUGIN}/registry.terraform.io/hashicorp/google/4.0.0/darwin_amd64
+$ cd ${TERRAFORM_PLUGIN}/registry.terraform.io/hashicorp/google/4.0.0/darwin_amd64
+# 下载
+$ wget https://releases.hashicorp.com/terraform-provider-google/4.0.0/terraform-provider-google_4.0.0_darwin_amd64.zip
+# 解压
+$ unzip terraform-provider-google_4.0.0_darwin_amd64.zip
+```
+
+
+
+## 准备Terraform代码
+
+需要提供Terraform代码理管理Pub/Sub，更多细节请参考： [Terrafrom GCP](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/pubsub_subscription).
+
+
+
+版本文件version.tf:
+
+```json
+terraform {
+  required_version = "= 1.0.11"
+  required_providers {
+
+    google = {
+      source  = "hashicorp/google"
+      version = "= 4.0.0"
+    }
+  }
+}
+```
+
+
+
+主文件main.tf:
+
+```json
+provider "google" {
+  project     = "pkslow"
+}
+
+resource "google_pubsub_topic" "pkslow-poc" {
+  name = "pkslow-poc"
+}
+
+resource "google_pubsub_subscription" "pkslow-poc" {
+  name  = "pkslow-poc"
+  topic = google_pubsub_topic.pkslow-poc.name
+
+  labels = {
+    foo = "bar"
+  }
+
+  # 20 minutes
+  message_retention_duration = "1200s"
+  retain_acked_messages      = true
+
+  ack_deadline_seconds = 20
+
+  expiration_policy {
+    ttl = "300000.5s"
+  }
+  retry_policy {
+    minimum_backoff = "10s"
+  }
+
+  enable_message_ordering    = true
+}
+```
+
+
+
+## 初始化和变更
+
+指定插件目录初始化：
+
+```bash
+$ terraform init -plugin-dir=${TERRAFORM_PLUGIN}
+```
+
+
+
+使变更生效，就会在GCP上创建对应的资源：
+
+```bash
+$ terraform apply -auto-approve
+```
+
+
+
+如果没有发生错误，则意味着创建成功，我们检查一下：
+
+```bash
+$ gcloud pubsub topics list
+---
+name: projects/pkslow/topics/pkslow-poc
+
+$ gcloud pubsub subscriptions list
+---
+ackDeadlineSeconds: 20
+enableMessageOrdering: true
+expirationPolicy:
+  ttl: 300000.500s
+labels:
+  foo: bar
+messageRetentionDuration: 1200s
+name: projects/pkslow/subscriptions/pkslow-poc
+pushConfig: {}
+retainAckedMessages: true
+retryPolicy:
+  maximumBackoff: 600s
+  minimumBackoff: 10s
+topic: projects/pkslow/topics/pkslow-poc
+```
+
+
+
+注意：我们并没有提供任何密码或密钥，那Terraform怎么可以直接操作我的GCP资源呢？因为它会根据环境变量**GOOGLE_APPLICATION_CREDENTIALS**来获取。
+
+
+
+# 发送和接收消息
+
+我们通过gcloud来发送消息到Pub/Sub上：
+
+```bash
+$ gcloud pubsub topics publish pkslow-poc --message="www.pkslow.com"
+messageIds:
+- '3491736520339885'
+
+$ gcloud pubsub topics publish pkslow-poc --message="Larry Deng"
+messageIds:
+- '3491738650256958'
+
+$ gcloud pubsub topics publish pkslow-poc --message="Hi, pkslower"
+messageIds:
+- '3491739306095970'
+```
+
+
+
+从Pub/Sub拉取消息：
+
+```bash
+$ gcloud pubsub subscriptions pull pkslow-poc --auto-ack
+```
+
+
+
+![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/2021/11/terraform-gcp-pubsub.pull.png)
+
+
+
+我们还能在GCP界面上监控对应的队列，十分方便：
+
+![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/2021/11/terraform-gcp-pubsub.console-pub.png)
 
 
