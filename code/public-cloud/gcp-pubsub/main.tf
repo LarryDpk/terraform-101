@@ -1,5 +1,5 @@
 provider "google" {
-  project     = "pkslow"
+  project = "pkslow"
 }
 
 resource "google_pubsub_topic" "pkslow-poc" {
@@ -27,5 +27,5 @@ resource "google_pubsub_subscription" "pkslow-poc" {
     minimum_backoff = "10s"
   }
 
-  enable_message_ordering    = true
+  enable_message_ordering = true
 }
