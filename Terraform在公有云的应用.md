@@ -305,4 +305,74 @@ $ gcloud pubsub subscriptions pull pkslow-poc --auto-ack
 
 ![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/2021/11/terraform-gcp-pubsub.console-pub.png)
 
+---
+# 通过Google Cloud Storage(GCS)管理Terraform的状态State
+管理Terraform状态文件的最佳方式是通过云端的统一的存储，如谷歌云就用GCS。
+
+首先要创建一个Bucket：
+
+```bash
+$ gsutil mb -p pkslow -l us-west1 -b on gs://pkslow-terraform
+Creating gs://pkslow-terraform/...
+
+$ gsutil ls gs://
+gs://pkslow-terraform/
+```
+
+
+
+然后在Terraform文件中配置对应的信息：
+
+```hcl
+terraform {
+  backend "gcs" {
+    bucket  = "pkslow-terraform"
+    prefix  = "state/gcp/pubsub"
+  }
+}
+```
+
+
+
+初始化后，就会在Bucket上创建对应的目录：
+
+```bash
+$ terraform init -plugin-dir=${TERRAFORM_PLUGIN}
+```
+
+
+
+变更生效：
+
+```bash
+$ terraform apply -auto-approve
+```
+
+
+
+我们在浏览器查看一下，发现已经成功状态了对应的状态文件：
+
+![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/2021/11/terraform-gcs.bucket-state.png)
+
+
+
+通过远程的云端，不仅可以存入状态文件，也可以从状态文件读取数据，如一些输出变量。比如模块A创建了一个VM，而我们可能通过这种方式获取它的IP，以便在其它模块使用。大致的配置如下：
+
+```hcl
+data "terraform_remote_state" "foo" {
+  backend = "gcs"
+  config = {
+    bucket  = "terraform-state"
+    prefix  = "prod"
+  }
+}
+
+resource "template_file" "bar" {
+  template = "${greeting}"
+
+  vars {
+    greeting = "${data.terraform_remote_state.foo.greeting}"
+  }
+}
+```
 
