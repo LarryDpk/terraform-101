@@ -33,3 +33,5 @@ override.tf.json
 
 .idea
 #pictures
+/code/01.introduction/terraform-introduction-by-pkslow.txt
+.DS_Store
