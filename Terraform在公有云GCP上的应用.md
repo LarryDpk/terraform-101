@@ -1,8 +1,10 @@
+> 《Terraform 101 从入门到实践》这本书只将在[南瓜慢说官方网站](https://www.pkslow.com/tags/terraform101)和[GitHub](https://github.com/LarryDpk/terraform-101)两个地方同步更新，如果你在其它地方看到，那应该就是抄袭和未授权的转载。书中的示例代码也是放在GitHub上，方便大家参考查看。
 
-# Terraform与云开发
+---
+
 Terraform支持的公有云有很多，如AWS、Azure、Google、Alibaba等。将Terraform应用于公有云，才最能发挥其强大的功能。
 
-# Terraform在GCP上的应用
+# 初始化GCP项目
 
 
 
@@ -11,7 +13,7 @@ Terraform支持的公有云有很多，如AWS、Azure、Google、Alibaba等。�
 
 要使用GCP，我们需要创建一个项目，它所有的资源都是在项目之下管理的：
 
-![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/2021/11/init-gcp-sdk.new-project.png)
+![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/other/terraform-101/pictures/public-cloud/gcp/init-gcp-sdk.new-project.png)
 
 
 
@@ -19,19 +21,19 @@ Terraform支持的公有云有很多，如AWS、Azure、Google、Alibaba等。�
 
 在实际开发中，我们不能使用自己的账号在做操作，最好的方式是创建一个服务账号（Service Account），这应该也是所有云平台都推荐的方式。创建位置如下：
 
-![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/2021/11/init-gcp-sdk.new-service-account.png)
+![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/other/terraform-101/pictures/public-cloud/gcp/init-gcp-sdk.new-service-account.png)
 
 
 
 输入账号名字：
 
-![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/2021/11/init-gcp-sdk.new-sa-name.png)
+![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/other/terraform-101/pictures/public-cloud/gcp/init-gcp-sdk.new-sa-name.png)
 
 
 
 选择角色，为了方便，我直接选择Owner，会拥有所有权限，但实际应用肯定不能这样，要做好隔离：
 
-![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/2021/11/init-gcp-sdk.new-sa-role.png)
+![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/other/terraform-101/pictures/public-cloud/gcp/init-gcp-sdk.new-sa-role.png)
 
 
 
@@ -41,7 +43,7 @@ Terraform支持的公有云有很多，如AWS、Azure、Google、Alibaba等。�
 
 对于Service Account，不是通过用户名密码来授权的，而是通过密钥文件，创建如下：
 
-![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/2021/11/init-gcp-sdk.new-sa-key.png)
+![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/other/terraform-101/pictures/public-cloud/gcp/init-gcp-sdk.new-sa-key.png)
 
 
 
@@ -135,7 +137,7 @@ topic: projects/pkslow/topics/pkslow-test
 
 在浏览器查看，发现已经成功创建了：
 
-![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/2021/11/init-gcp-sdk.pubsub.png)
+![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/other/terraform-101/pictures/public-cloud/gcp/init-gcp-sdk.pubsub.png)
 
 ---
 
@@ -269,7 +271,7 @@ topic: projects/pkslow/topics/pkslow-poc
 
 
 
-# 发送和接收消息
+## 发送和接收消息
 
 我们通过gcloud来发送消息到Pub/Sub上：
 
@@ -297,13 +299,13 @@ $ gcloud pubsub subscriptions pull pkslow-poc --auto-ack
 
 
 
-![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/2021/11/terraform-gcp-pubsub.pull.png)
+![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/other/terraform-101/pictures/public-cloud/gcp/terraform-gcp-pubsub.pull.png)
 
 
 
 我们还能在GCP界面上监控对应的队列，十分方便：
 
-![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/2021/11/terraform-gcp-pubsub.console-pub.png)
+![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/other/terraform-101/pictures/public-cloud/gcp/terraform-gcp-pubsub.console-pub.png)
 
 ---
 # 通过Google Cloud Storage(GCS)管理Terraform的状态State
@@ -352,7 +354,7 @@ $ terraform apply -auto-approve
 
 我们在浏览器查看一下，发现已经成功状态了对应的状态文件：
 
-![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/2021/11/terraform-gcs.bucket-state.png)
+![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/other/terraform-101/pictures/public-cloud/gcp/terraform-gcs.bucket-state.png)
 
 
 

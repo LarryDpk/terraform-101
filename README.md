@@ -9,15 +9,15 @@ Terraform作为基础设施即代码（Infrastructure as Code，很简称IaC）�
 
 该书会不断增加和完善内容，所以初期会有很多不完美的地方。如果大家有问题可以提Issue，但前期不会处理。**因为工作变动原因，我需要学习和适应，没有ETA，慢慢更新吧**。
 
-目前进度可能大概是60%？我也不确定。哈哈，佛系更新。但Terraform的基本概念是已经介绍了的，了解与入门是够用了。代码目前没有上传完全，但在文章中都会有，不影响大家理解。我会尽量在工作之余、带娃之余、睡觉之余挤时间完成。这篇文章也算是立个Flag，并自我监督吧。
+目前进度可能大概是70%？我也不确定。哈哈，佛系更新。但Terraform的基本概念是已经介绍了的，了解与入门是够用了。代码目前没有上传完全，但在文章中都会有，不影响大家理解。我会尽量在工作之余、带娃之余、睡觉之余挤时间完成。这篇文章也算是立个Flag，并自我监督吧。
 
 
 进度条：
 <div style="width: 100%;background-color: #ddd;">
-<div style="width: 60%; background-color: #5d21d0;
+<div style="width: 70%; background-color: #5d21d0;
 text-align: right;padding-right: 20px;
 line-height: 40px;color: white;">
-  60%
+  70%
 </div>
 </div>
 
@@ -39,7 +39,8 @@ line-height: 40px;color: white;">
 - [第五章 HCL语法](https://github.com/LarryDpk/terraform-101/blob/main/05.HCL语法.md)
 - [Functions函数](https://github.com/LarryDpk/terraform-101/blob/main/Functions函数.md)
 - [Terraform常用命令](https://github.com/LarryDpk/terraform-101/blob/main/Terraform常用命令.md)
-- [Terraform在公有云的应用](https://github.com/LarryDpk/terraform-101/blob/main/Terraform在公有云的应用.md)
+- [Terraform在公有云GCP上的应用](https://github.com/LarryDpk/terraform-101/blob/main/Terraform在公有云GCP上的应用.md)
+- [Terraform在公有云Azure上的应用](https://github.com/LarryDpk/terraform-101/blob/main/Terraform在公有云Azure上的应用.md)
 - Terraform问题定位与分析（未开始）
 - 插件开发（未开始）
 - 最佳实践（未开始）
@@ -56,7 +57,8 @@ line-height: 40px;color: white;">
 - [第五章 HCL语法](https://www.pkslow.com/archives/terraform-101-hcl)
 - [Functions函数](https://www.pkslow.com/archives/terraform-101-functions)
 - [Terraform常用命令](https://www.pkslow.com/archives/terraform-101-commands)
-
+- [Terraform在公有云GCP上的应用](https://www.pkslow.com/archives/terraform-101-gcp)
+- [Terraform在公有云Azure上的应用](https://www.pkslow.com/archives/terraform-101-azure)
 ---
 
 
