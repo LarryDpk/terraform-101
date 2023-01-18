@@ -800,6 +800,556 @@ terraform destroy
 
 
 
+# 部署Azure Kubernetes集群
+
+## 通过Auzre CLI部署
+
+### 创建资源组
+
+Azure资源组是用于部署和管理Azure资源的逻辑组。创建资源时，系统会提示你指定一个位置。该位置主要用于：
+
+（1）资源组元数据的存储位置；
+
+（2）在创建资源期间未指定另一个区域时，资源在Azure中的运行位置。
+
+
+
+我们通过以下命令来创建资源组：
+
+```bash
+$ az group create --name pkslow-aks --location eastasia
+{
+  "id": "/subscriptions/cd7921d5-9ba9-45db-bfba-1c397fcaaba3/resourceGroups/pkslow-aks",
+  "location": "eastasia",
+  "managedBy": null,
+  "name": "pkslow-aks",
+  "properties": {
+    "provisioningState": "Succeeded"
+  },
+  "tags": null,
+  "type": "Microsoft.Resources/resourceGroups"
+}
+```
+
+
+
+### 创建AKS
+
+通过下面的命令创建AKS：
+
+```bash
+az aks create -g pkslow-aks -n pkslow --enable-managed-identity --node-count 1 --enable-addons monitoring --enable-msi-auth-for-monitoring  --generate-ssh-keys
+```
+
+
+
+创建完成后会输出很大的Json日志，我们直接来查看一下是否正确生成：
+
+```bash
+$ az aks list --output table
+Name    Location    ResourceGroup    KubernetesVersion    CurrentKubernetesVersion    ProvisioningState    Fqdn
+------  ----------  ---------------  -------------------  --------------------------  -------------------  --------------------------------------------------------
+pkslow  eastasia    pkslow-aks       1.24.6               1.24.6                      Succeeded            pkslow-pkslow-aks-cd7921-725c7247.hcp.eastasia.azmk8s.io
+```
+
+
+
+### 连接到AKS
+
+需要有`kubectl`命令，没有的就安装一下：
+
+```bash
+az aks install-cli
+```
+
+
+
+连接集群需要认证，要获取一下验证配置：
+
+```bash
+$ az aks get-credentials --resource-group pkslow-aks --name pkslow
+Merged "pkslow" as current context in /Users/larry/.kube/config
+```
+
+
+
+成功后就可以连接并操作了：
+
+```bash
+$ kubectl get node
+NAME                                STATUS   ROLES   AGE     VERSION
+aks-nodepool1-29201873-vmss000000   Ready    agent   8m45s   v1.24.6
+
+
+$ kubectl get ns
+NAME              STATUS   AGE
+default           Active   9m33s
+kube-node-lease   Active   9m35s
+kube-public       Active   9m35s
+kube-system       Active   9m35s
+
+
+$ kubectl get pod -n kube-system
+NAME                                  READY   STATUS    RESTARTS   AGE
+ama-logs-lhlkb                        3/3     Running   0          9m8s
+ama-logs-rs-6cf9546595-rdmh9          2/2     Running   0          9m26s
+azure-ip-masq-agent-nppvd             1/1     Running   0          9m8s
+cloud-node-manager-bd4c2              1/1     Running   0          9m8s
+coredns-59b6bf8b4f-lrzpp              1/1     Running   0          9m26s
+coredns-59b6bf8b4f-zbbkm              1/1     Running   0          7m56s
+coredns-autoscaler-5655d66f64-5946c   1/1     Running   0          9m26s
+csi-azuredisk-node-9rpvd              3/3     Running   0          9m8s
+csi-azurefile-node-hvxhc              3/3     Running   0          9m8s
+konnectivity-agent-95ff8bbd-fwkds     1/1     Running   0          9m26s
+konnectivity-agent-95ff8bbd-qg9vx     1/1     Running   0          9m26s
+kube-proxy-c5crz                      1/1     Running   0          9m8s
+metrics-server-7dd74d8758-ms8h9       2/2     Running   0          7m50s
+metrics-server-7dd74d8758-nxq9t       2/2     Running   0          7m50s
+```
+
+
+
+### 部署测试应用
+
+为了方便，我们直接使用官网的示例来测试一下。创建文件`azure-vote.yaml`，内容如下：
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: azure-vote-back
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: azure-vote-back
+  template:
+    metadata:
+      labels:
+        app: azure-vote-back
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+        - name: azure-vote-back
+          image: mcr.microsoft.com/oss/bitnami/redis:6.0.8
+          env:
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          ports:
+            - containerPort: 6379
+              name: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: azure-vote-back
+spec:
+  ports:
+    - port: 6379
+  selector:
+    app: azure-vote-back
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: azure-vote-front
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: azure-vote-front
+  template:
+    metadata:
+      labels:
+        app: azure-vote-front
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+        - name: azure-vote-front
+          image: mcr.microsoft.com/azuredocs/azure-vote-front:v1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          ports:
+            - containerPort: 80
+          env:
+            - name: REDIS
+              value: "azure-vote-back"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: azure-vote-front
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+  selector:
+    app: azure-vote-front
+```
+
+
+
+
+
+然后执行以下命令：
+
+```bash
+$ kubectl apply -f azure-vote.yaml
+deployment.apps/azure-vote-back created
+service/azure-vote-back created
+deployment.apps/azure-vote-front created
+service/azure-vote-front created
+```
+
+
+
+成功后查看对应资源：
+
+```bash
+$ kubectl get svc
+NAME               TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)        AGE
+azure-vote-back    ClusterIP      10.0.156.161   <none>         6379/TCP       112s
+azure-vote-front   LoadBalancer   10.0.29.217    20.239.124.1   80:30289/TCP   112s
+kubernetes         ClusterIP      10.0.0.1       <none>         443/TCP        21m
+
+$ kubectl get deployment
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+azure-vote-back    1/1     1            1           2m1s
+azure-vote-front   1/1     1            1           2m1s
+
+$ kubectl get pod
+NAME                                READY   STATUS    RESTARTS   AGE
+azure-vote-back-7cd69cc96f-gqm7r    1/1     Running   0          2m7s
+azure-vote-front-7c95676c68-jtkqz   1/1     Running   0          2m7s
+```
+
+已经成功创建。
+
+看front那有external IP，通过它直接在浏览器访问如下：
+
+![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/other/terraform-101/pictures/public-cloud/azure/aks-cli.front-page.png)
+
+
+
+应用已经成功部署并访问了。
+
+
+
+### 删除资源组
+
+如果完成测试，不再使用，可以整个资源组一起删除：
+
+```bash
+az group delete --name pkslow-aks --yes --no-wait
+```
+
+
+
+## 通过Terraform部署
+
+### 配置插件和版本
+
+```hcl
+terraform {
+  required_version = ">= 1.1.3"
+  required_providers {
+
+    azurerm = {
+      source = "hashicorp/azurerm"
+      version = "3.38.0"
+    }
+
+    random = {
+      source  = "hashicorp/random"
+      version = "= 3.1.0"
+    }
+  }
+}
+```
+
+
+
+### 变量设置
+
+给`Terraform`设置一些要用到的变量：
+
+```hcl
+variable "agent_count" {
+  default = 1
+}
+
+# The following two variable declarations are placeholder references.
+# Set the values for these variable in terraform.tfvars
+variable "aks_service_principal_app_id" {
+  default = ""
+}
+
+variable "aks_service_principal_client_secret" {
+  default = ""
+}
+
+variable "cluster_name" {
+  default = "pkslow-k8s"
+}
+
+variable "dns_prefix" {
+  default = "pkslow"
+}
+
+# Refer to https://azure.microsoft.com/global-infrastructure/services/?products=monitor for available Log Analytics regions.
+variable "log_analytics_workspace_location" {
+  default = "eastus"
+}
+
+variable "log_analytics_workspace_name" {
+  default = "testLogAnalyticsWorkspaceName"
+}
+
+# Refer to https://azure.microsoft.com/pricing/details/monitor/ for Log Analytics pricing
+variable "log_analytics_workspace_sku" {
+  default = "PerGB2018"
+}
+
+variable "resource_group_location" {
+  default     = "eastus"
+  description = "Location of the resource group."
+}
+
+variable "resource_group_name_prefix" {
+  default     = "rg"
+  description = "Prefix of the resource group name that's combined with a random ID so name is unique in your Azure subscription."
+}
+
+variable "ssh_public_key" {
+  default = "~/.ssh/id_rsa.pub"
+}
+```
+
+
+
+`agent_count`应该设置合理，这里设成1是因为我的账号是免费的，有限制。
+
+
+
+### 输出结果
+
+当Terraform执行完，会有一些结果，我们可以把一些值输出以便使用：
+
+```hcl
+output "client_certificate" {
+  value     = azurerm_kubernetes_cluster.k8s.kube_config[0].client_certificate
+  sensitive = true
+}
+
+output "client_key" {
+  value     = azurerm_kubernetes_cluster.k8s.kube_config[0].client_key
+  sensitive = true
+}
+
+output "cluster_ca_certificate" {
+  value     = azurerm_kubernetes_cluster.k8s.kube_config[0].cluster_ca_certificate
+  sensitive = true
+}
+
+output "cluster_password" {
+  value     = azurerm_kubernetes_cluster.k8s.kube_config[0].password
+  sensitive = true
+}
+
+output "cluster_username" {
+  value     = azurerm_kubernetes_cluster.k8s.kube_config[0].username
+  sensitive = true
+}
+
+output "host" {
+  value     = azurerm_kubernetes_cluster.k8s.kube_config[0].host
+  sensitive = true
+}
+
+output "kube_config" {
+  value     = azurerm_kubernetes_cluster.k8s.kube_config_raw
+  sensitive = true
+}
+
+output "resource_group_name" {
+  value = azurerm_resource_group.rg.name
+}
+```
+
+
+
+### main.tf创建AKS
+
+通过`azurerm_kubernetes_cluster`创建AKS：
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+# Generate random resource group name
+resource "random_pet" "rg_name" {
+  prefix = var.resource_group_name_prefix
+}
+
+resource "azurerm_resource_group" "rg" {
+  location = var.resource_group_location
+  name     = random_pet.rg_name.id
+}
+
+resource "random_id" "log_analytics_workspace_name_suffix" {
+  byte_length = 8
+}
+
+resource "azurerm_log_analytics_workspace" "test" {
+  location            = var.log_analytics_workspace_location
+  # The WorkSpace name has to be unique across the whole of azure;
+  # not just the current subscription/tenant.
+  name                = "${var.log_analytics_workspace_name}-${random_id.log_analytics_workspace_name_suffix.dec}"
+  resource_group_name = azurerm_resource_group.rg.name
+  sku                 = var.log_analytics_workspace_sku
+}
+
+resource "azurerm_log_analytics_solution" "test" {
+  location              = azurerm_log_analytics_workspace.test.location
+  resource_group_name   = azurerm_resource_group.rg.name
+  solution_name         = "ContainerInsights"
+  workspace_name        = azurerm_log_analytics_workspace.test.name
+  workspace_resource_id = azurerm_log_analytics_workspace.test.id
+
+  plan {
+    product   = "OMSGallery/ContainerInsights"
+    publisher = "Microsoft"
+  }
+}
+
+resource "azurerm_kubernetes_cluster" "k8s" {
+  location            = azurerm_resource_group.rg.location
+  name                = var.cluster_name
+  resource_group_name = azurerm_resource_group.rg.name
+  dns_prefix          = var.dns_prefix
+  tags                = {
+    Environment = "Development"
+  }
+
+  default_node_pool {
+    name       = "agentpool"
+    vm_size    = "Standard_D2_v2"
+    node_count = var.agent_count
+  }
+  linux_profile {
+    admin_username = "ubuntu"
+
+    ssh_key {
+      key_data = file(var.ssh_public_key)
+    }
+  }
+  network_profile {
+    network_plugin    = "kubenet"
+    load_balancer_sku = "standard"
+  }
+  service_principal {
+    client_id     = var.aks_service_principal_app_id
+    client_secret = var.aks_service_principal_client_secret
+  }
+}
+```
+
+
+
+### 执行
+
+准备好文件后，先初始化，下载插件：
+
+```bash
+$ terraform init
+
+Initializing the backend...
+
+Initializing provider plugins...
+- Finding hashicorp/random versions matching "3.1.0"...
+- Finding hashicorp/azurerm versions matching "3.38.0"...
+- Installing hashicorp/random v3.1.0...
+- Installed hashicorp/random v3.1.0 (unauthenticated)
+- Installing hashicorp/azurerm v3.38.0...
+- Installed hashicorp/azurerm v3.38.0 (signed by HashiCorp)
+
+Terraform has created a lock file .terraform.lock.hcl to record the provider
+selections it made above. Include this file in your version control repository
+so that Terraform can guarantee to make the same selections by default when
+you run "terraform init" in the future.
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+```
+
+
+
+查看Terraform计划，知道将要生成多少资源：
+
+```bash
+$ terraform plan -out main.tfplan -var="aks_service_principal_app_id=$ARM_CLIENT_ID" -var="aks_service_principal_client_secret=$ARM_CLIENT_SECRET"
+```
+
+
+
+没有问题则执行变更：
+
+```bash
+$ terraform apply main.tfplan
+Outputs:
+
+client_certificate = <sensitive>
+client_key = <sensitive>
+cluster_ca_certificate = <sensitive>
+cluster_password = <sensitive>
+cluster_username = <sensitive>
+host = <sensitive>
+kube_config = <sensitive>
+resource_group_name = "rg-harmless-tomcat"
+```
+
+
+
+### 连接AKS
+
+把kube_config输出，然后设置环境变量就可以通过kubectl连接了：
+
+```bash
+$ echo "$(terraform output kube_config)" > ./azurek8s
+
+$ export KUBECONFIG=./azurek8s
+
+$ kubectl get nodes
+NAME                                STATUS   ROLES   AGE     VERSION
+aks-agentpool-45159290-vmss000000   Ready    agent   9m20s   v1.24.6
+```
+
+如果有问题，可以查看azurek8s文件是否正常。
+
+
+
 
 
 ---
@@ -821,3 +1371,8 @@ terraform destroy
 [Create an Azure VM cluster with Terraform and HCL](https://learn.microsoft.com/en-us/azure/developer/terraform/create-vm-cluster-with-infrastructure)
 
 [Install Terraform on Windows with Bash](https://learn.microsoft.com/en-us/azure/developer/terraform/get-started-windows-bash?tabs=bash)
+
+[快速入门：使用Azure CLI部署Azure Kubernetes服务集群](https://learn.microsoft.com/zh-cn/azure/aks/learn/quick-kubernetes-deploy-cli)
+
+[Quickstart: Create a Kubernetes cluster with Azure Kubernetes Service using Terraform](https://learn.microsoft.com/en-us/azure/developer/terraform/create-k8s-cluster-with-tf-and-aks)
+
