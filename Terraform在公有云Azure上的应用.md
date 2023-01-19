@@ -1350,6 +1350,356 @@ aks-agentpool-45159290-vmss000000   Ready    agent   9m20s   v1.24.6
 
 
 
+# 创建PostgreSQL
+
+
+
+### 通过Azure CLI创建Single Server
+
+### 创建资源组和数据库
+
+先创建资源组：
+
+```bash
+az group create --name pkslow-sql --location eastasia --tag create-postgresql-server-and-firewall-rule
+```
+
+
+
+然后创建数据库：
+
+```bash
+$ az postgres server create \
+> --name pkslow-pg \
+> --resource-group pkslow-sql \
+> --location eastasia \
+> --admin-user pguser \
+> --admin-password 'Pa$$word' \
+> --sku-name GP_Gen5_2
+
+
+Checking the existence of the resource group 'pkslow-sql'...
+Resource group 'pkslow-sql' exists ? : True 
+Creating postgres Server 'pkslow-pg' in group 'pkslow-sql'...
+Your server 'pkslow-pg' is using sku 'GP_Gen5_2' (Paid Tier). Please refer to https://aka.ms/postgres-pricing  for pricing details
+Make a note of your password. If you forget, you would have to reset your password with 'az postgres server update -n pkslow-pg -g pkslow-sql -p <new-password>'.
+{
+  "additionalProperties": {},
+  "administratorLogin": "pguser",
+  "byokEnforcement": "Disabled",
+  "connectionString": "postgres://pguser%40pkslow-pg:Pa$$word@pkslow-pg.postgres.database.azure.com/postgres?sslmode=require",
+  "earliestRestoreDate": "2023-01-15T03:24:18.440000+00:00",
+  "fullyQualifiedDomainName": "pkslow-pg.postgres.database.azure.com",
+  "id": "/subscriptions/cd7921d5-9ba9-45db-bfba-1c397fcaaba3/resourceGroups/pkslow-sql/providers/Microsoft.DBforPostgreSQL/servers/pkslow-pg",
+  "identity": null,
+  "infrastructureEncryption": "Disabled",
+  "location": "eastasia",
+  "masterServerId": "",
+  "minimalTlsVersion": "TLSEnforcementDisabled",
+  "name": "pkslow-pg",
+  "password": "Pa$$word",
+  "privateEndpointConnections": [],
+  "publicNetworkAccess": "Enabled",
+  "replicaCapacity": 5,
+  "replicationRole": "None",
+  "resourceGroup": "pkslow-sql",
+  "sku": {
+    "additionalProperties": {},
+    "capacity": 2,
+    "family": "Gen5",
+    "name": "GP_Gen5_2",
+    "size": null,
+    "tier": "GeneralPurpose"
+  },
+  "sslEnforcement": "Enabled",
+  "storageProfile": {
+    "additionalProperties": {},
+    "backupRetentionDays": 7,
+    "geoRedundantBackup": "Disabled",
+    "storageAutogrow": "Enabled",
+    "storageMb": 5120
+  },
+  "tags": null,
+  "type": "Microsoft.DBforPostgreSQL/servers",
+  "userVisibleState": "Ready",
+  "version": "11"
+}
+```
+
+创建成功后，会打印很多有用的信息，如连接信息。
+
+
+
+也可以在以后查看：
+
+```bash
+az postgres server show --resource-group pkslow-sql --name pkslow-pg
+```
+
+
+
+### 禁用SSL
+
+创建完成后还可以更新一些配置，如我们禁用SSL：
+
+```bash
+az postgres server update --resource-group pkslow-sql --name pkslow-pg --ssl-enforcement Disabled
+```
+
+> 生产环境不要禁用SSL。
+
+
+
+### 添加防火墙
+
+需要把客户端IP添加到Firewall，不然会连接失败。
+
+```bash
+az postgres server firewall-rule create \
+--resource-group pkslow-sql \
+--server pkslow-pg \
+--name AllowIps \
+--start-ip-address '0.0.0.0' \
+--end-ip-address '255.255.255.255'
+```
+
+
+
+### 测试连接
+
+配置连接如下，注意用户名不只是`pguser`：
+
+![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/other/terraform-101/pictures/public-cloud/azure/postgresql.cli.connected.png)
+
+
+
+### 删除资源
+
+如果不需要再使用，就删除资源：
+
+```bash
+az group delete --name pkslow-sql
+```
+
+
+
+## 通过Terraform创建Flexible Server
+
+
+
+### 插件与版本
+
+```hcl
+terraform {
+  required_version = ">= 1.1.3"
+  required_providers {
+
+    azurerm = {
+      source = "hashicorp/azurerm"
+      version = "3.38.0"
+    }
+  }
+}
+
+provider "azurerm" {
+  features {}
+}
+```
+
+
+
+### 变量设置
+
+```hcl
+variable "name_prefix" {
+  default     = "pkslow-pg-fs"
+  description = "Prefix of the resource name."
+}
+
+variable "location" {
+  default     = "eastus"
+  description = "Location of the resource."
+}
+```
+
+
+
+### main.tf创建
+
+```hcl
+resource "random_pet" "rg-name" {
+  prefix = var.name_prefix
+}
+
+resource "azurerm_resource_group" "default" {
+  name     = random_pet.rg-name.id
+  location = var.location
+}
+
+resource "azurerm_virtual_network" "default" {
+  name                = "${var.name_prefix}-vnet"
+  location            = azurerm_resource_group.default.location
+  resource_group_name = azurerm_resource_group.default.name
+  address_space       = ["10.0.0.0/16"]
+}
+
+resource "azurerm_network_security_group" "default" {
+  name                = "${var.name_prefix}-nsg"
+  location            = azurerm_resource_group.default.location
+  resource_group_name = azurerm_resource_group.default.name
+
+  security_rule {
+    name                       = "test123"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+
+resource "azurerm_subnet" "default" {
+  name                 = "${var.name_prefix}-subnet"
+  virtual_network_name = azurerm_virtual_network.default.name
+  resource_group_name  = azurerm_resource_group.default.name
+  address_prefixes     = ["10.0.2.0/24"]
+  service_endpoints    = ["Microsoft.Storage"]
+
+  delegation {
+    name = "fs"
+
+    service_delegation {
+      name = "Microsoft.DBforPostgreSQL/flexibleServers"
+
+      actions = [
+        "Microsoft.Network/virtualNetworks/subnets/join/action",
+      ]
+    }
+  }
+}
+
+resource "azurerm_subnet_network_security_group_association" "default" {
+  subnet_id                 = azurerm_subnet.default.id
+  network_security_group_id = azurerm_network_security_group.default.id
+}
+
+resource "azurerm_private_dns_zone" "default" {
+  name                = "${var.name_prefix}-pdz.postgres.database.azure.com"
+  resource_group_name = azurerm_resource_group.default.name
+
+  depends_on = [azurerm_subnet_network_security_group_association.default]
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "default" {
+  name                  = "${var.name_prefix}-pdzvnetlink.com"
+  private_dns_zone_name = azurerm_private_dns_zone.default.name
+  virtual_network_id    = azurerm_virtual_network.default.id
+  resource_group_name   = azurerm_resource_group.default.name
+}
+
+resource "azurerm_postgresql_flexible_server" "default" {
+  name                   = "${var.name_prefix}-server"
+  resource_group_name    = azurerm_resource_group.default.name
+  location               = azurerm_resource_group.default.location
+  version                = "13"
+  delegated_subnet_id    = azurerm_subnet.default.id
+  private_dns_zone_id    = azurerm_private_dns_zone.default.id
+  administrator_login    = "pguser"
+  administrator_password = "QAZwsx123"
+  zone                   = "1"
+  storage_mb             = 32768
+  sku_name               = "GP_Standard_D2s_v3"
+  backup_retention_days  = 7
+
+  depends_on = [azurerm_private_dns_zone_virtual_network_link.default]
+}
+```
+
+
+
+准备文件：pg-fs-db.tf
+
+```hcl
+resource "azurerm_postgresql_flexible_server_database" "default" {
+  name      = "${var.name_prefix}-db"
+  server_id = azurerm_postgresql_flexible_server.default.id
+  collation = "en_US.UTF8"
+  charset   = "UTF8"
+}
+```
+
+
+
+### 输出结果
+
+```hcl
+output "resource_group_name" {
+  value = azurerm_resource_group.default.name
+}
+
+output "azurerm_postgresql_flexible_server" {
+  value = azurerm_postgresql_flexible_server.default.name
+}
+
+output "postgresql_flexible_server_database_name" {
+  value = azurerm_postgresql_flexible_server_database.default.name
+}
+```
+
+
+
+### 执行
+
+准备好hcl文件后，执行如下：
+
+```bash
+$ terraform init
+
+$ terraform plan -out main.tfplan
+
+$ terraform apply main.tfplan
+Apply complete! Resources: 10 added, 0 changed, 0 destroyed.
+
+Outputs:
+azurerm_postgresql_flexible_server = "pkslow-pg-fs-server"
+postgresql_flexible_server_database_name = "pkslow-pg-fs-db"
+resource_group_name = "pkslow-pg-fs-delicate-honeybee"
+```
+
+
+
+创建成功后，可以查看：
+
+```bash
+$ az postgres flexible-server list --output table
+Name                 Resource Group                  Location    Version    Storage Size(GiB)    Tier            SKU              State    HA State    Availability zone
+-------------------  ------------------------------  ----------  ---------  -------------------  --------------  ---------------  -------  ----------  -------------------
+pkslow-pg-fs-server  pkslow-pg-fs-delicate-honeybee  East US     13         32                   GeneralPurpose  Standard_D2s_v3  Ready    NotEnabled  1
+```
+
+
+
+当然，在Portal上看也是可以的：
+
+![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/other/terraform-101/pictures/public-cloud/azure/postgresql.terraform.portal.png)
+
+
+
+### 删除
+
+不需要了可以执行删除：
+
+```bash
+ terraform destroy
+```
+
+
+
+
+
 
 
 ---
@@ -1375,4 +1725,12 @@ aks-agentpool-45159290-vmss000000   Ready    agent   9m20s   v1.24.6
 [快速入门：使用Azure CLI部署Azure Kubernetes服务集群](https://learn.microsoft.com/zh-cn/azure/aks/learn/quick-kubernetes-deploy-cli)
 
 [Quickstart: Create a Kubernetes cluster with Azure Kubernetes Service using Terraform](https://learn.microsoft.com/en-us/azure/developer/terraform/create-k8s-cluster-with-tf-and-aks)
+
+[Quickstart: Create an Azure Database for PostgreSQL server by using the Azure CLI](https://learn.microsoft.com/en-us/azure/postgresql/single-server/quickstart-create-server-database-azure-cli)
+
+[Deploy a PostgreSQL Flexible Server Database using Terraform](https://learn.microsoft.com/en-us/azure/developer/terraform/deploy-postgresql-flexible-server-database?tabs=azure-cli)
+
+[PostgreSQL Flexible Server error: Operations on a server group in dropping state are not allowed](https://github.com/hashicorp/terraform-provider-azurerm/issues/16622)
+
+
 

@@ -31,7 +31,10 @@ override.tf.json
 *.lock.hcl
 .result
 
+*.tfplan
+
 .idea
 #pictures
-/code/01.introduction/terraform-introduction-by-pkslow.txt
+terraform-introduction-by-pkslow.txt
 .DS_Store
+/code/public-cloud/azure-aks/terraform/azurek8s
