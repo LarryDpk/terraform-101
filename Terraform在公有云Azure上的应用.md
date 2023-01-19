@@ -1895,5 +1895,5 @@ Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 
 [PostgreSQL Flexible Server error: Operations on a server group in dropping state are not allowed](https://github.com/hashicorp/terraform-provider-azurerm/issues/16622)
 
-
+[How to Create an Azure Remote Backend for Terraform](https://gmusumeci.medium.com/how-to-create-an-azure-remote-backend-for-terraform-67cce5da1520)
 
