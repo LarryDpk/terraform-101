@@ -1698,7 +1698,170 @@ pkslow-pg-fs-server  pkslow-pg-fs-delicate-honeybee  East US     13         32  
 
 
 
+# 在Azure云存储上管理Terraform状态
 
+默认Terraform的状态是保存在本地的，为了安全和协作，在生产环境中一般要保存在云上。
+
+
+
+## 创建Azure Storage
+
+我们创建Storage来存储Terraform状态。按下面一步步执行即可：
+
+```bash
+RESOURCE_GROUP_NAME=pkslow-tstate-rg
+STORAGE_ACCOUNT_NAME=pkslowtfstate
+CONTAINER_NAME=tfstate
+
+# Create resource group
+az group create --name $RESOURCE_GROUP_NAME --location "West Europe"
+
+# Create storage account
+az storage account create --resource-group $RESOURCE_GROUP_NAME --name $STORAGE_ACCOUNT_NAME --sku Standard_LRS --encryption-services blob
+
+# Get storage account key
+ACCOUNT_KEY=$(az storage account keys list --resource-group $RESOURCE_GROUP_NAME --account-name $STORAGE_ACCOUNT_NAME --query [0].value -o tsv)
+
+# Create blob container
+az storage container create --name $CONTAINER_NAME --account-name $STORAGE_ACCOUNT_NAME --account-key $ACCOUNT_KEY
+
+echo "storage_account_name: $STORAGE_ACCOUNT_NAME"
+echo "container_name: $CONTAINER_NAME"
+echo "access_key: $ACCOUNT_KEY"
+```
+
+
+
+## Terraform backend
+
+创建完Storage后，我们需要在Terraform中配置使用：
+
+```hcl
+terraform {
+  required_version = ">= 1.1.3"
+  required_providers {
+
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "3.38.0"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "= 2.1.0"
+    }
+  }
+
+  backend "azurerm" {
+    resource_group_name  = "pkslow-tstate-rg"
+    storage_account_name = "pkslowtfstate"
+    container_name       = "tfstate"
+    key                  = "pkslow.tfstate"
+  }
+}
+
+provider "azurerm" {
+  features {}
+}
+
+resource "local_file" "test-file" {
+  content  = "https://www.pkslow.com"
+  filename = "${path.root}/terraform-guides-by-pkslow.txt"
+}
+```
+
+
+
+主要代码是这块：
+
+```hcl
+backend "azurerm" {
+resource_group_name  = "pkslow-tstate-rg"
+storage_account_name = "pkslowtfstate"
+container_name       = "tfstate"
+key                  = "pkslow.tfstate"
+}
+```
+
+这里前三个变量的值都是前面创建Storage的时候指定的。
+
+
+
+## 执行Terraform
+
+初始化：
+
+```bash
+$ terraform init
+
+Initializing the backend...
+
+Initializing provider plugins...
+- Finding hashicorp/local versions matching "2.1.0"...
+- Finding hashicorp/azurerm versions matching "3.38.0"...
+- Installing hashicorp/local v2.1.0...
+- Installed hashicorp/local v2.1.0 (unauthenticated)
+- Installing hashicorp/azurerm v3.38.0...
+- Installed hashicorp/azurerm v3.38.0 (signed by HashiCorp)
+
+Terraform has created a lock file .terraform.lock.hcl to record the provider
+selections it made above. Include this file in your version control repository
+so that Terraform can guarantee to make the same selections by default when
+you run "terraform init" in the future.
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+```
+
+看日志就会初始化backend。
+
+
+
+执行apply：
+
+```bash
+$ terraform apply -auto-approve
+Acquiring state lock. This may take a few moments...
+
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # local_file.test-file will be created
+  + resource "local_file" "test-file" {
+      + content              = "https://www.pkslow.com"
+      + directory_permission = "0777"
+      + file_permission      = "0777"
+      + filename             = "./terraform-guides-by-pkslow.txt"
+      + id                   = (known after apply)
+    }
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+local_file.test-file: Creating...
+local_file.test-file: Creation complete after 0s [id=6db7ad1bbf57df0c859cd5fc62ff5408515b5fc1]
+Releasing state lock. This may take a few moments...
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+```
+
+
+
+然后我们去查看Azure Storage，就可以发现已经生成一个Terraform状态文件：
+
+![](https://pkslow.oss-cn-shenzhen.aliyuncs.com/images/other/terraform-101/pictures/public-cloud/azure/state.azure-storage.png)
+
+
+
+
+
+如果不再使用，记得删除资源。
 
 
 
